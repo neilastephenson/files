@@ -1,0 +1,110 @@
+{
+    "name": "UserApi Demo Step 1",
+    "flow": [
+        {
+            "id": 1,
+            "module": "userapi-ai:ImagineByPrompt",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 2773836
+            },
+            "mapper": {
+                "prompt": "Two mice having a heated debate",
+                "webhook_url": "https://hook.eu1.make.com/uhynuxtgpat4vdyb93a8i5e4td2koq6b"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "webhook_type": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "is_disable_prefilter": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "userapi-ai"
+                            },
+                            "label": "UserAPI (me@neilstephenson.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:userapi-ai",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "prompt",
+                        "type": "text",
+                        "label": "Prompt to generate image",
+                        "required": true
+                    },
+                    {
+                        "name": "webhook_url",
+                        "type": "url",
+                        "label": "Webhook Url. You will be POSTed by this url about progress/result of generation"
+                    },
+                    {
+                        "name": "webhook_type",
+                        "type": "select",
+                        "label": "Webhook type. If Webhook Url defined - you can specify when you need to get result of your imagine",
+                        "validate": {
+                            "enum": [
+                                "progress",
+                                "result"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "callback_id",
+                        "type": "text",
+                        "label": "Callback ID. This unique identifier will be sent back to you via POST request in webhook to track the progress/result of the task"
+                    },
+                    {
+                        "name": "account_hash",
+                        "type": "uuid",
+                        "label": "Hash of the specific account to be used for generating the image"
+                    },
+                    {
+                        "name": "is_disable_prefilter",
+                        "type": "boolean",
+                        "label": "Disable prefilter?"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com"
+    }
+}

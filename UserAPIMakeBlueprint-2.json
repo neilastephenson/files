@@ -1,0 +1,183 @@
+{
+    "name": "UserAPI Demo Step 2",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 1545692,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": {
+                            "data": {
+                                "editable": "true"
+                            },
+                            "label": "UserAPI Step 1 Response"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRepeater",
+            "version": 1,
+            "parameters": {},
+            "filter": {
+                "name": "Check",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{1.status}}",
+                            "b": "done",
+                            "o": "text:equal"
+                        },
+                        {
+                            "a": "{{1.result}}",
+                            "o": "exist"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "step": "1",
+                "start": "1",
+                "repeats": "4"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 388,
+                    "y": -8
+                },
+                "restore": {},
+                "expect": [
+                    {
+                        "name": "start",
+                        "type": "number",
+                        "label": "Initial value",
+                        "required": true
+                    },
+                    {
+                        "name": "repeats",
+                        "type": "number",
+                        "label": "Repeats",
+                        "required": true,
+                        "validate": {
+                            "max": 10000,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "step",
+                        "type": "number",
+                        "label": "Step",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "userapi-ai:Upscale",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 2773836
+            },
+            "mapper": {
+                "hash": "{{1.hash}}",
+                "choice": "{{3.i}}",
+                "webhook_url": "https://hook.eu1.make.com/o75gdfy6qn3vufuxug1fa5g9goorjxll"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 784,
+                    "y": -7
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "userapi-ai"
+                            },
+                            "label": "UserAPI (me@neilstephenson.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:userapi-ai",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "hash",
+                        "type": "uuid",
+                        "label": "The hash of the task that needs to be upscaled",
+                        "required": true
+                    },
+                    {
+                        "name": "choice",
+                        "type": "integer",
+                        "label": "The position of the image that needs to be upscaled"
+                    },
+                    {
+                        "name": "webhook_url",
+                        "type": "url",
+                        "label": "Webhook Url. You will be POSTed by this url about result of generation"
+                    },
+                    {
+                        "name": "callback_id",
+                        "type": "text",
+                        "label": "Callback ID. This unique identifier will be sent back to you via POST request in webhook to track the progress/result of the task"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com"
+    }
+}
