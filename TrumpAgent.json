@@ -1,0 +1,889 @@
+{
+  "name": "N8N Assistant Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "7cc0962c-8b4e-4035-9dd9-feb361564411",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        440
+      ],
+      "webhookId": "8dec3cd9-5f64-4865-92d1-bb88f1b0e042",
+      "credentials": {
+        "telegramApi": {
+          "id": "E7dI0Wxqn49EdFKI",
+          "name": "Neil's N8N Assistant Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "1fdceed9-6d22-4eea-bb5e-d7a26c1e5b1d",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1860,
+        640
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "copywriting",
+        "description": "Call this tool for information on copywriting in marketing"
+      },
+      "id": "628c352e-ce38-4971-9f02-0e64edca24a4",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        1980,
+        780
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "016b294c-354c-43ce-88b2-c4ad0d9a420c",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        960
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "19a1df1e-d25c-409f-b517-e86114ce5a94",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        1120
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a7987f54-46a0-4b7b-938c-714f375c0a0a",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2380,
+        440
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "E7dI0Wxqn49EdFKI",
+          "name": "Neil's N8N Assistant Agent"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "401bf511-e4d6-47f1-af16-a86fb9b52519",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.5,
+      "position": [
+        1880,
+        200
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2798e0e7-48ca-49ef-a75b-924ddc279d24",
+              "name": "=text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d8b4ea0-f07a-424d-a27c-4f54d57348df",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1800,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "be4f384e-8e5d-442e-88fe-5811a09d533b",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5a730c5c-d7a5-489c-a0ae-5bf9c73514a7",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1540,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "a3bf582d-30fb-4e9e-bfb5-c541583365f6",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1980,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to get emails from Neil's inbox. To filter, it will need date/time info for \"received after\" and \"received before\"",
+        "operation": "getAll",
+        "limit": 25,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ],
+          "readStatus": "both",
+          "receivedAfter": "={{ $fromAI(\"after_date\", \"the date that emails were received after\") }}",
+          "receivedBefore": "={{ $fromAI(\"before_date\", \"the date that emails were received before\") }}"
+        }
+      },
+      "id": "03dc8e68-8d80-44ae-ab5c-dd2afd90e67d",
+      "name": "Get Emails",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2600,
+        700
+      ],
+      "webhookId": "417c1c21-d523-4bf6-a632-95a0785b243a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7Q6jRLILRZHQpyFD",
+          "name": "NS Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to get events from Neil's calendar using a before and after date to filter.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "me@neilstephenson.com",
+          "mode": "list",
+          "cachedResultName": "me@neilstephenson.com"
+        },
+        "options": {
+          "timeMin": "={{ $fromAI(\"after\", \"the date that the events are after\") }}",
+          "timeMax": "={{ $fromAI(\"before\", \"the date that the events are before\") }}",
+          "timeZone": {
+            "__rl": true,
+            "value": "Europe/London",
+            "mode": "list",
+            "cachedResultName": "Europe/London"
+          }
+        }
+      },
+      "id": "19b53011-390f-485f-9094-b0ee84d54950",
+      "name": "Get Events",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        2380,
+        700
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "8RjjIETtSyizmnRp",
+          "name": "NS Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to create an event in Neil's calendar - it will need a start date/time, an end date/time, and a title for the event.",
+        "calendar": {
+          "__rl": true,
+          "value": "me@neilstephenson.com",
+          "mode": "list",
+          "cachedResultName": "me@neilstephenson.com"
+        },
+        "start": "={{ $fromAI(\"start\", \"date and time that the event should start\") }}",
+        "end": "={{ $fromAI(\"end\", \"date and time that the event should end\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"title\", \"the title of the event\") }}"
+        }
+      },
+      "id": "bf4c8bf0-18ea-46a1-93ad-c9774e85a130",
+      "name": "Create Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.2,
+      "position": [
+        2480,
+        700
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "8RjjIETtSyizmnRp",
+          "name": "NS Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to send a text email from Neil. It requires an email address or email addresses to send to, a subject, and a message.",
+        "sendTo": "={{ $fromAI(\"email\", \"the email address or addresses of the recipient or recipients\") }}",
+        "subject": "={{ $fromAI(\"subject\", \"the subject of the email\") }}",
+        "emailType": "text",
+        "message": "={{ $fromAI(\"message\", \"the content of the email to be sent\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "3a56c74f-35ce-4e5c-835c-3a9b262e236a",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        2700,
+        700
+      ],
+      "webhookId": "417c1c21-d523-4bf6-a632-95a0785b243a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "7Q6jRLILRZHQpyFD",
+          "name": "NS Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "GetTodaysTasks",
+        "description": "Call this tool to get a list of today's tasks from Neil's Todoist account",
+        "workflowId": {
+          "__rl": true,
+          "value": "2IGnqaDhvCmi7iM5",
+          "mode": "list",
+          "cachedResultName": "Tool: Get Today's Tasks"
+        }
+      },
+      "id": "0cf7347d-1c01-42fe-8d1c-f657ad3b2f84",
+      "name": "Get Today's Tasks",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2820,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "name": "CreateTask",
+        "description": "Call this tool to create a task in Todoist. The input should be the task name in plain text.",
+        "workflowId": {
+          "__rl": true,
+          "value": "rfY41dkcIDOmyeYP",
+          "mode": "list",
+          "cachedResultName": "Tool: Create Task"
+        }
+      },
+      "id": "b22e6818-7445-4a75-92fc-ca3131f5a3c6",
+      "name": "Create Task",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2920,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "name": "CreateFluxImage",
+        "description": "Call this tool when the user requests an image to be generated. You should send the request from the user to this tool. The tool will respond with the URL of the image.",
+        "workflowId": {
+          "__rl": true,
+          "value": "g4beYptanSATg8Oh",
+          "mode": "list",
+          "cachedResultName": "Tool: Create Flux Image"
+        }
+      },
+      "id": "ae5cc291-0a6e-418b-b6af-397292b8210a",
+      "name": "Create Flux Image",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3040,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8nagent",
+          "mode": "list",
+          "cachedResultName": "n8nagent"
+        },
+        "options": {
+          "pineconeNamespace": "Copywriting"
+        }
+      },
+      "id": "b0cf8d44-5c0a-4665-b038-9c6403f64670",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        1900,
+        960
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "8e4hv3nNA98hXB2z",
+          "name": "NS Pinecone"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "VoiceNote",
+        "description": "Call this tool if the user indicates they want to make a note of something. You should send the full content of the input text from the user.",
+        "workflowId": {
+          "__rl": true,
+          "value": "sKeRafMh0Ik8ONNW",
+          "mode": "list",
+          "cachedResultName": "Tool: Voice Note"
+        }
+      },
+      "id": "aa7524e2-30e1-4b16-8bc2-322a1f177281",
+      "name": "Create Note",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3140,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful personal agent of Neil Stephenson, and your role is to take his input and help him get things done. You will help with a number of tasks including his calendar, email, to-do list, and several other tasks which may be more complex and require you to delegate to a sub-agent.\n\nYou have a number of tools/agents at your disposal:\n\nGoogle Calendar: Get Events - This tool is used to get events from Neil's calendar using a before and after date to filter.\n\nGoogle Calendar: Create Event - This tool is used to create an event in Neil's calendar - it will need a start date/time, an end date/time, and a title for the event.\n\nGmail: Get Emails - This tool is used to get emails from Neil's inbox. To filter, it will need date/time info for \"received after\" and \"received before\"\n\nGmail: Send Email - This tool is used to send a text email from Neil. It requires an email address or email addresses to send to, a subject, and a message.\n\nGet Today's Tasks - This tool is used to get a list of today's tasks from Neil's Todoist account. If I ask what's on my to do list - I mean tasks, so use this and not the calendar tools\n\nCreate Task - This tool is used to create a task in Neil's Todoist account. The input should be the task name\n\nCreate Flux Image - This tool is used to create an image, if Neil requests one to be created. You should return the URL of the image to Neil\n\nCreate Note - This tool is used if the user indicates they want to make a note of something. They might say \"make a note\" or \"take a note\" or \"this is a note\" or \"heres a thought\" or anything along those lines. You should send the full text input from the user to this tool.\n\nAgent: Marketing Dept - Call this sub-agent if there is a marketing task related to social media, content, or paid advertising.\n\nAgent: Sales Dept - Call this sub-agent if there is a sales task related to lead generation, setting up outbound sequences, booking sales meetings.\n\nAgent: Finance Dept - Call this sub-agent if there is a finance task related to invoices, bookkeeping or contracts.\n\nNeil is in London, UK, so please use that timezone. Right now it is {{ $now }}"
+        }
+      },
+      "id": "b41072f9-41ab-441b-8642-2ec1d3f16520",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        2060,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "7224456f-25d6-4a7a-a0a4-1c7b6455c2de",
+      "name": "Get Audio File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "E7dI0Wxqn49EdFKI",
+          "name": "Neil's N8N Assistant Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "id": "335906f3-0b40-486e-a03d-e4075a7d3086",
+      "name": "Send Audio Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3020,
+        220
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "E7dI0Wxqn49EdFKI",
+          "name": "Neil's N8N Assistant Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "voice_id": {
+          "__rl": true,
+          "value": "wxDJyJbb9NbcN6NssYJ0",
+          "mode": "list",
+          "cachedResultName": "Old NY Man 5"
+        },
+        "additionalFields": {},
+        "requestOptions": {}
+      },
+      "id": "0d785e9e-3094-4027-a060-5d2336e6b77e",
+      "name": "Generate Speech",
+      "type": "n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        220
+      ],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "pfpjBeRdqzELbn1J",
+          "name": "NS ElevenLabs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "7100367a-a746-4110-a46f-bf7d77ec6724",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        380
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is a message sent to Neil, please make it sound like it came from Donald Trump. Go over the top with the stereotypes etc, but don't lose or change any key info:\n\nAlso don't include any asterisks etc in the text.\n\n{{ $json.output }}"
+      },
+      "id": "3f057f24-e818-422e-9b72-c3ac3dbaae46",
+      "name": "Trumpify",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2400,
+        220
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Audio File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Today's Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Flux Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Note": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Trumpify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio File": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Speech": {
+      "main": [
+        [
+          {
+            "node": "Send Audio Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Trumpify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trumpify": {
+      "main": [
+        [
+          {
+            "node": "Generate Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "021d9b74-4085-4031-bcd8-be316a37df71",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68eea0537afeb2973c217411e684754f9df42696b091a2eacf90466097aa84c8"
+  },
+  "id": "btXwSyA8oGM01nRo",
+  "tags": []
+}
