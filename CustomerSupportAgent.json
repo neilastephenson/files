@@ -1,0 +1,747 @@
+{
+  "name": "Customer Support Agent - Billy's Boxing Gym",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "d7ef6d20-7812-4902-befb-00fe51948faa",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2440,
+        720
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this module to get membership info on the user when you have the user's email address",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appG4yqjQ2PuhFFVF",
+          "mode": "list",
+          "cachedResultName": "Billy's Boxing Gym",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl9yjesU5jdspVWk",
+          "mode": "list",
+          "cachedResultName": "Members",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF/tbl9yjesU5jdspVWk"
+        },
+        "filterByFormula": "={Email} = \"{{ $fromAI(\"email\", \"the email address of the user\") }}\"",
+        "options": {}
+      },
+      "id": "a5423ba2-940c-4b18-9cd3-1aa8221509d8",
+      "name": "Search Users by Email",
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2860,
+        860
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "noOLlnYNaa3Nzs9i",
+          "name": "NS Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this module to find info on classes based on type of class",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appG4yqjQ2PuhFFVF",
+          "mode": "list",
+          "cachedResultName": "Billy's Boxing Gym",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl8Ygs2fI46afknb",
+          "mode": "list",
+          "cachedResultName": "Classes",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF/tbl8Ygs2fI46afknb"
+        },
+        "filterByFormula": "={Class Name} = \"{{ $fromAI(\"class_name\", \"name of the class - options are: Beginners Class, Advanced Class, Ladies Only, Sparring, Boxercise\") }}\"",
+        "options": {}
+      },
+      "id": "033178aa-1a37-426e-8fac-361e0428425c",
+      "name": "Search Classes",
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3000,
+        860
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "noOLlnYNaa3Nzs9i",
+          "name": "NS Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "410c0285-1f91-4f40-9abe-c1c5c4ac7e5c",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        2140,
+        580
+      ],
+      "webhookId": "3f60237d-4bfc-4505-b737-b7376b0a28f9",
+      "credentials": {
+        "telegramApi": {
+          "id": "Gw4xXwcpCTIm6ZtY",
+          "name": "CustServTestBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2798e0e7-48ca-49ef-a75b-924ddc279d24",
+              "name": "=text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cea10a44-e521-42af-9e08-ac2e254a935d",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2520,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f6212885-1f95-4687-b8b1-7cf5850d57a7",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fb5ac34e-3d7e-434a-8af2-eb781d14ce82",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2300,
+        580
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ae8d8811-6e61-4b96-a6fa-92d48fdc1161",
+      "name": "Ignore",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "ONLY call this tool when you have both the class recordID and the member's recordID. This will add the member to the class.",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appG4yqjQ2PuhFFVF",
+          "mode": "list",
+          "cachedResultName": "Billy's Boxing Gym",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl8Ygs2fI46afknb",
+          "mode": "list",
+          "cachedResultName": "Classes",
+          "cachedResultUrl": "https://airtable.com/appG4yqjQ2PuhFFVF/tbl8Ygs2fI46afknb"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Members": "=[\"{{ $fromAI(\"user_record_id\", \"the recordID of the user to add\") }}\"]",
+            "id": "={{ $fromAI(\"class_record_id\", \"the record ID of the class to update\") }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "ClassID",
+              "displayName": "ClassID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Class Name",
+              "displayName": "Class Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Sparring",
+                  "value": "Sparring"
+                },
+                {
+                  "name": "Ladies Only",
+                  "value": "Ladies Only"
+                },
+                {
+                  "name": "Boxercise",
+                  "value": "Boxercise"
+                },
+                {
+                  "name": "Beginners Class",
+                  "value": "Beginners Class"
+                },
+                {
+                  "name": "Advanced Class",
+                  "value": "Advanced Class"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date & Time",
+              "displayName": "Date & Time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Members",
+              "displayName": "Members",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "5e46910e-e96a-4f50-8d80-08dc51047d3a",
+      "name": "Add to Class",
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3120,
+        860
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "noOLlnYNaa3Nzs9i",
+          "name": "NS Airtable"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "tableName": "n8n_chat_history"
+      },
+      "id": "2f07d485-723b-4d3d-856f-77b4e79c4e82",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.1,
+      "position": [
+        2560,
+        720
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "7UNhKRmLkuit9hxw",
+          "name": "Supabase - Neil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"message\": \"Here are your details, Andy:\\n\\n- **Name**: Andy Brown\\n- **Email**: andy1@gmail.com\\n- **Membership**: Basic\\n- **Membership Number**: 00001\\n\\nIf you need help with anything else, feel free to ask!\",\n  \"memory\": {\n    \"content\": \"test\",\n    \"class_record_id\": \"\",\n    \"user_record_id\": \"rec6wL8SBMhkQHkQ0\",\n    \"last_class_name\": \"\",\n    \"last_email\": \"andy1@gmail.com\"\n  },\n  \"requires_tool\": {\n    \"name\": \"\",\n    \"params\": {}\n  }\n}"
+      },
+      "id": "670d825f-b1fe-4e3e-bed9-629c08790675",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        3380,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.output.memory }}",
+              "hideFromUI": true
+            }
+          ]
+        }
+      },
+      "id": "c5d1bad4-e8b0-41f7-8256-aefc09744d28",
+      "name": "Chat Memory Manager1",
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        3040,
+        440
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $('AI Agent').item.json.output.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0466b3a5-3ec7-4713-8f93-89db1f5e1f96",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3360,
+        440
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Gw4xXwcpCTIm6ZtY",
+          "name": "CustServTestBot"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "e78d5f88-7041-4606-8b42-efe8805ac6fb",
+      "name": "Auto-fixing Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        3280,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0,
+          "maxRetries": 3
+        }
+      },
+      "id": "722acc57-d928-442f-96ef-f6c6e3a06480",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        3260,
+        1040
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "billysboxinggym",
+        "description": "Gets general info about Billy's Boxing Gym. Opening hours, costs, rules etc"
+      },
+      "id": "29f73fea-f432-4b0a-aa0b-08e73b1f5ce1",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "26536afb-9722-4d1d-acdd-4b5e5073f49c",
+      "name": "OpenAI Chat Model2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        2740,
+        1020
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "29dd90bf-2dc0-47da-ada1-a0ff04f6d3ce",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        1160
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "iZb3x2BjAGmfEfGa",
+          "name": "NS OpenAI Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "billysboxinggym",
+          "mode": "list",
+          "cachedResultName": "billysboxinggym"
+        },
+        "options": {
+          "pineconeNamespace": "billysboxing"
+        }
+      },
+      "id": "27789697-6d2b-477f-b6e6-275733c9147d",
+      "name": "Pinecone Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        1020
+      ],
+      "credentials": {
+        "pineconeApi": {
+          "id": "8e4hv3nNA98hXB2z",
+          "name": "NS Pinecone"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a customer support agent for Billy's Boxing Gym. Your job is to help the customer with their enquiries. You should maintain a friendly, helpful, polite tone.\n\nThe current date and time is {{ $now }}\n\nRESPONSE FORMAT: Always respond in JSON format with this EXACT structure:\n{\n  \"output\": {\n    \"message\": \"Your friendly response to the user\",\n    \"memory\": {\n      \"content\": \"Previous message as a string\",\n      \"class_record_id\": \"ID or empty string\",\n      \"user_record_id\": \"ID or empty string\",\n      \"last_class_name\": \"class name or empty string\",\n      \"last_email\": \"email or empty string\"\n    },\n    \"requires_tool\": {\n      \"name\": \"tool name or empty string\",\n      \"params\": {}\n    }\n  }\n}\n\nYou have access to memory - you should only use this as a last resort if you can't get the info from tools easily.\n\nYou have access to these tools:\n1. vector store - Contains FAQs on Billy's Boxing Gym. Use for general questions. Don't make up facts.\n2. search_users - Gets user details by email. Ask for email first.\n3. search_classes - Gets info on upcoming classes by name.\n4. add_to_class - ONLY use when you have BOTH user_record_id AND class_record_id.\n\nCRITICAL RULES:\n1. When user asks about classes:\n   - Use search_classes tool\n   - Store class_record_id for booking\n   - Set requires_tool.name = \"search_classes\"\n\n2. When user provides email:\n   - Use search_users tool\n   - Store user_record_id for booking\n   - Set requires_tool.name = \"search_users\"\n\n3. When adding to class:\n   - MUST have both recordIDs\n   - Use add_to_class tool\n   - Set requires_tool.name = \"add_to_class\"\n\n4. ALWAYS maintain the JSON structure\n5. Store previous message in memory.content\n6. Keep recordIDs when received\n7. Store email when provided\n8. Keep class name when mentioned\n\nRemember:\n- Keep responses friendly and natural\n- Store all necessary IDs\n- Maintain proper JSON format\n- Process tools when needed\n- Keep memory updated"
+        }
+      },
+      "id": "d8c18535-fc22-4055-abf7-98223f6a2a9b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        2700,
+        440
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Users by Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Classes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Ignore",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Chat Memory Manager1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory Manager1": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Class": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory Manager1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "fe4602ae-4f38-4334-9224-a10442635e22",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68eea0537afeb2973c217411e684754f9df42696b091a2eacf90466097aa84c8"
+  },
+  "id": "UcdnKgKgMZC28I8k",
+  "tags": []
+}
